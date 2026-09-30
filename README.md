@@ -1,20 +1,47 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://ai.google.dev/static/site-assets/images/share-ais-513315318.png" />
-</div>
+# PaxoraGrid
 
-# Run and deploy your AI Studio app
+PaxoraGrid is a federated early-warning and stock redistribution platform for India's Primary Health Centres (PHCs). It brings facility resource reporting, public health monitoring, forecasting, and inter-facility supply coordination into one dashboard.
 
-This contains everything you need to run your app locally.
+## Features
 
-View your app in AI Studio: https://ai.studio/apps/ce88c602-7ce5-427f-857b-079faf8ea432
+- Monitor facility capacity, staffing, and medicine stock.
+- Surface public health signals and resource shortfalls.
+- Forecast demand and support stock redistribution between facilities.
+- Record field updates and coordinate transfers.
+- Use Gemini-powered advisory and voice features when an API key is configured.
+
+## Requirements
+
+- Node.js
+- npm
 
 ## Run Locally
 
-**Prerequisites:**  Node.js
-
-
 1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+
+   ```sh
+   npm install
+   ```
+
+2. Optional: create a `.env` file in the project root and set your Gemini API key to enable Gemini-backed features:
+
+   ```env
+   GEMINI_API_KEY=your-gemini-api-key
+   ```
+
+   The app can run without this key; Gemini-backed features use their simulated fallback behavior.
+
+3. Start the development server:
+
+   ```sh
+   npm run dev
+   ```
+
+   Open http://localhost:3000.
+
+## Available Commands
+
+- `npm run dev` starts the development server.
+- `npm run build` creates a production build in `dist/`.
+- `npm run preview` serves the production build locally.
+- `npm run lint` runs the TypeScript check.
