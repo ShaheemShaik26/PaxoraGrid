@@ -27,7 +27,7 @@ if (apiKey && apiKey !== 'MY_GEMINI_API_KEY') {
     apiKey,
     httpOptions: {
       headers: {
-        'User-Agent': 'aistudio-build'
+        'User-Agent': 'PaxoraGrid'
       }
     }
   });
