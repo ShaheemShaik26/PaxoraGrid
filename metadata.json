@@ -1,0 +1,6 @@
+{
+  "name": "PaxoraGrid",
+  "description": "Federated early-warning and stock redistribution network for India's Primary Health Centres (PHCs)",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

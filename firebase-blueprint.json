@@ -1,0 +1,134 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "Authenticated healthcare worker profile",
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "string",
+          "description": "Unique user ID from Firebase Auth"
+        },
+        "email": {
+          "type": "string",
+          "description": "User email address"
+        },
+        "displayName": {
+          "type": "string",
+          "description": "Full name of the health officer"
+        },
+        "photoURL": {
+          "type": "string",
+          "description": "Avatar URL"
+        },
+        "role": {
+          "type": "string",
+          "description": "Clinical or administrative role"
+        },
+        "state": {
+          "type": "string",
+          "description": "Assigned administrative state"
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "Creation timestamp"
+        }
+      },
+      "required": ["userId", "email"]
+    },
+    "FieldReport": {
+      "title": "FieldReport",
+      "description": "PHC daily bed, staff, and stock submission",
+      "type": "object",
+      "properties": {
+        "reportId": {
+          "type": "string",
+          "description": "Report ID"
+        },
+        "userId": {
+          "type": "string",
+          "description": "Submitter UID"
+        },
+        "phcId": {
+          "type": "string",
+          "description": "PHC identifier"
+        },
+        "facilityName": {
+          "type": "string",
+          "description": "Name of the health facility"
+        },
+        "occupiedBeds": {
+          "type": "number",
+          "description": "Current beds occupied"
+        },
+        "presentStaff": {
+          "type": "number",
+          "description": "Staff count on duty"
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "Submission ISO timestamp"
+        }
+      },
+      "required": ["reportId", "userId", "phcId"]
+    },
+    "TransferRecord": {
+      "title": "TransferRecord",
+      "description": "Approved drug redistribution record",
+      "type": "object",
+      "properties": {
+        "transferId": {
+          "type": "string",
+          "description": "Unique transfer identifier"
+        },
+        "sourcePhcId": {
+          "type": "string",
+          "description": "Source facility ID"
+        },
+        "targetPhcId": {
+          "type": "string",
+          "description": "Target facility ID"
+        },
+        "drugId": {
+          "type": "string",
+          "description": "NLEM drug code or ID"
+        },
+        "quantity": {
+          "type": "number",
+          "description": "Approved transfer quantity"
+        },
+        "status": {
+          "type": "string",
+          "description": "Transfer status: PROPOSED, APPROVED, DISPATCHED"
+        },
+        "approvedBy": {
+          "type": "string",
+          "description": "Approving medical officer name"
+        },
+        "challanNumber": {
+          "type": "string",
+          "description": "Digital gate pass challan reference"
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "Approval timestamp"
+        }
+      },
+      "required": ["transferId", "sourcePhcId", "targetPhcId", "drugId", "quantity"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "User",
+      "description": "User profile collection"
+    },
+    "/field_reports/{reportId}": {
+      "schema": "FieldReport",
+      "description": "Field logs and biometric check-ins"
+    },
+    "/transfers/{transferId}": {
+      "schema": "TransferRecord",
+      "description": "Approved inter-facility stock transfers"
+    }
+  }
+}

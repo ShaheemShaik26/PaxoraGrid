@@ -1,0 +1,73 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // 1. Global Default-Deny Catch-All
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Helper functions
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() > 0 && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    // 2. Users Collection
+    match /users/{userId} {
+      allow get: if isOwner(userId);
+      allow list: if false;
+      allow create: if isOwner(userId)
+                    && isValidId(userId)
+                    && incoming().userId == request.auth.uid
+                    && incoming().email is string
+                    && incoming().email.size() <= 256;
+      allow update: if isOwner(userId)
+                    && incoming().userId == existing().userId
+                    && incoming().email == existing().email;
+      allow delete: if false;
+    }
+
+    // 3. Field Reports Collection
+    match /field_reports/{reportId} {
+      allow get, list: if isSignedIn();
+      allow create: if isSignedIn()
+                    && isValidId(reportId)
+                    && incoming().userId == request.auth.uid
+                    && incoming().phcId is string
+                    && incoming().phcId.size() <= 64;
+      allow update: if isSignedIn()
+                    && existing().userId == request.auth.uid
+                    && incoming().userId == existing().userId;
+      allow delete: if false;
+    }
+
+    // 4. Stock Transfers Collection
+    match /transfers/{transferId} {
+      allow get, list: if isSignedIn();
+      allow create: if isSignedIn()
+                    && isValidId(transferId)
+                    && incoming().sourcePhcId is string
+                    && incoming().targetPhcId is string
+                    && incoming().quantity is number
+                    && incoming().quantity > 0;
+      allow update: if isSignedIn()
+                    && incoming().transferId == existing().transferId;
+      allow delete: if false;
+    }
+  }
+}
