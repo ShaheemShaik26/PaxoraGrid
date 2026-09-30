@@ -53,7 +53,7 @@ flowchart LR
 ## Features
 
 - **Health resource command:** Facility capacity, staffing, medicine inventory, estimated days of cover, risk indicators, and transfer recommendations.
-- **Facility map:** Google Maps embed plus a Leaflet map layer using CARTO tiles. The current code does not require a Google Maps API key.
+- **Facility map:** Google Maps Embed API for Roadmap and Satellite when configured, plus a Leaflet map layer using CARTO tiles. Terrain and keyless use retain the existing Google Maps embed fallback.
 - **Federated state grid:** State-node and model-metric visualization with a demo training-round interaction.
 - **PHC field terminal:** Update facility details and medicine counts through a field-report workflow.
 - **Outbreak simulator:** Trigger sample outbreak scenarios and inspect their effect on risk and suggested transfers.
@@ -79,6 +79,7 @@ flowchart LR
 - A modern browser and an internet connection for hosted map tiles and external service features.
 - A Firebase project only if you need Google sign-in or Firestore persistence. Demo administrator access is available without Firebase sign-in.
 - A `GEMINI_API_KEY` only if you want Gemini-backed features. Core demo screens can run without it.
+- A Google Maps Embed API key if you want the keyed Roadmap and Satellite embed. The existing keyless map fallback remains available.
 
 ## Run Locally
 
@@ -94,7 +95,7 @@ flowchart LR
    Copy-Item .env.example .env
    ```
 
-   Set `GEMINI_API_KEY` in `.env` to enable Gemini-backed features. Without it, the app uses its built-in fallback behavior for supported features.
+    Set `GEMINI_API_KEY` in `.env` to enable Gemini-backed features and `VITE_GOOGLE_MAPS_API_KEY` to enable the keyed Roadmap/Satellite embed. Both are optional; built-in fallbacks remain available.
 
 3. Start the app:
 
@@ -122,10 +123,11 @@ The Firebase web API key is a client identifier, not an authorization boundary. 
 | Variable / file | Purpose | Required |
 | --- | --- | --- |
 | `GEMINI_API_KEY` | Enables server-side Gemini chat, advisory, digitization, and live voice integrations. | No; fallback behavior is available. |
+| `VITE_GOOGLE_MAPS_API_KEY` | Enables the Google Maps Embed API for Roadmap/Satellite map modes. Vite includes this browser key in client assets. | No; the existing keyless map fallback remains available. |
 | `PORT` | Changes the Express server port. Defaults to `3000`. | No |
 | `firebase-applet-config.json` | Firebase web app and Firestore database configuration. | Only for Firebase sign-in and persistence. |
 
-No Google Maps API key is currently read by the application. The map uses an embedded Google Maps URL and Leaflet/CARTO tiles.
+Enable the Maps Embed API and billing for the Google Cloud project associated with the Maps key. Because `VITE_GOOGLE_MAPS_API_KEY` is exposed to the browser, restrict it by allowed HTTP referrers and to the Maps Embed API. Terrain continues to use the existing keyless embed because the Maps Embed API supports Roadmap and Satellite map types.
 
 ## Demo Data and Limitations
 
@@ -166,5 +168,6 @@ docs/images/    README screenshots
 ## Security Notes
 
 - Keep `.env` out of source control; it is ignored by Git. Use server-side environment variables for `GEMINI_API_KEY`.
+- Treat `VITE_GOOGLE_MAPS_API_KEY` as a public browser key: restrict it by HTTP referrer and API; do not rely on hiding it in `.env`.
 - Review Firebase Authentication settings and Firestore security rules before connecting non-demo users or data.
 - Use synthetic or de-identified data during development. Do not put patient-identifiable health information into this prototype.

@@ -95,6 +95,29 @@ export const MapView: React.FC<MapViewProps> = ({
 
   const activeTransfers = transfers.filter(t => t.status === 'PROPOSED' || t.status === 'APPROVED');
   const selectedFacilityObj = facilities.find(f => f.id === selectedFacilityId);
+  const mapQuery = selectedFacilityObj
+    ? `${selectedFacilityObj.name}, ${selectedFacilityObj.district}, ${selectedFacilityObj.state}, India`
+    : selectedState !== 'ALL'
+      ? `${selectedState}, India Primary Health Centre`
+      : 'India Primary Health Centres and Government Hospitals';
+  const mapZoom = selectedFacilityObj ? 14 : selectedState !== 'ALL' ? 7 : 5;
+  const mapsApiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY?.trim();
+  // Maps Embed API supports roadmap and satellite; keep the existing terrain fallback.
+  const googleMapsEmbedUrl = mapsApiKey && googleMapType !== 'p'
+    ? `https://www.google.com/maps/embed/v1/search?${new URLSearchParams({
+      key: mapsApiKey,
+      q: mapQuery,
+      maptype: googleMapType === 'k' ? 'satellite' : 'roadmap',
+      zoom: String(mapZoom)
+    })}`
+    : `https://maps.google.com/maps?${new URLSearchParams({
+      q: mapQuery,
+      t: googleMapType,
+      z: String(mapZoom),
+      ie: 'UTF8',
+      iwloc: '',
+      output: 'embed'
+    })}`;
 
   // Key metrics
   const criticalCount = displayFacilities.filter(f => getFacilityWorstStatus(f.id) === 'CRITICAL').length;
@@ -574,16 +597,11 @@ export const MapView: React.FC<MapViewProps> = ({
               {/* Official Google Maps Live Embed */}
               <iframe
                 title="Official Google Maps India"
-                src={`https://maps.google.com/maps?q=${encodeURIComponent(
-                  selectedFacilityObj 
-                    ? `${selectedFacilityObj.name}, ${selectedFacilityObj.district}, ${selectedFacilityObj.state}, India` 
-                    : selectedState !== 'ALL' 
-                      ? `${selectedState}, India Primary Health Centre` 
-                      : 'India Primary Health Centres and Government Hospitals'
-                )}&t=${googleMapType}&z=${selectedFacilityObj ? 14 : selectedState !== 'ALL' ? 7 : 5}&ie=UTF8&iwloc=&output=embed`}
+                src={googleMapsEmbedUrl}
                 className="w-full h-full border-0 select-auto"
                 allowFullScreen
                 loading="lazy"
+                referrerPolicy="strict-origin-when-cross-origin"
               />
 
               {/* Facility Quick Jump Drawer */}
